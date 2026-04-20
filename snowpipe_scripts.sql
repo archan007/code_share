@@ -215,3 +215,24 @@ FROM TABLE(INFORMATION_SCHEMA.COPY_HISTORY(
      and COPY statements.
    =============================================================================
 */
+
+Please update the trust policy on IAM role <role-name> with the JSON below.
+Values from Snowflake:
+
+IAM User ARN: <paste STORAGE_AWS_IAM_USER_ARN here>
+External ID: <paste STORAGE_AWS_EXTERNAL_ID here>
+
+Trust policy JSON:
+json{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": { "AWS": "<IAM User ARN>" },
+      "Action": "sts:AssumeRole",
+      "Condition": {
+        "StringEquals": { "sts:ExternalId": "<External ID>" }
+      }
+    }
+  ]
+}
