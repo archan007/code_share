@@ -59,8 +59,15 @@ jobs:
         run: |
           latest_url=$(curl -s https://api.github.com/repos/liquibase/liquibase/releases/latest | grep "browser_download_url.*tar.gz" | cut -d '"' -f 4)
           wget "$latest_url" -O liquibase-latest.tar.gz
+          mkdir -p liquibase-install
           tar -xzf liquibase-latest.tar.gz -C liquibase-install
           echo "$PWD/liquibase-install" >> "$GITHUB_PATH"
+
+      - name: Download Snowflake JDBC driver
+        run: |
+          JDBC_VERSION="3.19.0"
+          wget "https://repo1.maven.org/maven2/net/snowflake/snowflake-jdbc/${JDBC_VERSION}/snowflake-jdbc-${JDBC_VERSION}.jar" \
+            -O liquibase-install/lib/snowflake-jdbc-${JDBC_VERSION}.jar
 
       - name: Verify Liquibase installation
         run: liquibase --version
