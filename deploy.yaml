@@ -55,11 +55,15 @@ jobs:
             --output-root output/ddl \
             | tee engine.log
 
-      - name: Set up Liquibase
-        uses: liquibase/setup-liquibase@v2
-        with:
-          version: "4.32.0"
-          edition: "community"
+      - name: Download and install Liquibase
+        run: |
+          latest_url=$(curl -s https://api.github.com/repos/liquibase/liquibase/releases/latest | grep "browser_download_url.*tar.gz" | cut -d '"' -f 4)
+          wget "$latest_url" -O liquibase-latest.tar.gz
+          tar -xzf liquibase-latest.tar.gz -C liquibase-install
+          echo "$PWD/liquibase-install" >> "$GITHUB_PATH"
+
+      - name: Verify Liquibase installation
+        run: liquibase --version
 
       - name: Liquibase status
         run: |
