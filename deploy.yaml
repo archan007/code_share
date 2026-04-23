@@ -74,17 +74,17 @@ jobs:
 
       - name: Liquibase status
         run: |
-          liquibase status \
-            --search-path=. \
-            --changelog-file=liquibase/changelog-master.xml \
+          liquibase \
+            --defaults-file=liquibase/liquibase.properties \
+            status \
             --url="jdbc:snowflake://${{ env.SNOWFLAKE_ACCOUNT }}.snowflakecomputing.com/?db=${{ env.SNOWFLAKE_DATABASE }}&warehouse=${{ env.SNOWFLAKE_WAREHOUSE }}&role=${{ env.SNOWFLAKE_ROLE }}&authenticator=SNOWFLAKE_JWT&private_key_file=${{ env.SNOWFLAKE_PRIVATE_KEY_PATH }}" \
             --username=${{ env.SNOWFLAKE_USER }}
 
       - name: Liquibase update
         run: |
-          liquibase update \
-            --search-path=. \
-            --changelog-file=liquibase/changelog-master.xml \
+          liquibase \
+            --defaults-file=liquibase/liquibase.properties \
+            update \
             --url="jdbc:snowflake://${{ env.SNOWFLAKE_ACCOUNT }}.snowflakecomputing.com/?db=${{ env.SNOWFLAKE_DATABASE }}&warehouse=${{ env.SNOWFLAKE_WAREHOUSE }}&role=${{ env.SNOWFLAKE_ROLE }}&authenticator=SNOWFLAKE_JWT&private_key_file=${{ env.SNOWFLAKE_PRIVATE_KEY_PATH }}" \
             --username=${{ env.SNOWFLAKE_USER }}
 
