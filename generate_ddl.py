@@ -86,6 +86,9 @@ class Changeset:
             attrs.append("runOnChange:true")
         attrs.append(f"labels:{self.object_type},{self.operation}")
         attrs.append(f"context:{self.operation}")
+        if "$$" in self.sql:
+            attrs.append("splitStatements:false")
+            attrs.append("endDelimiter:")
         if attrs:
             header += " " + " ".join(attrs)
         header += f"\n--comment {self.operation.upper()} {self.object_type} {self.fqn}"
