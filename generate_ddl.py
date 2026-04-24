@@ -46,6 +46,14 @@ CREATE_ORDER = [
     "task",
 ]
 
+# FQN suffixes for infrastructure/system tables that should never be
+# flagged as drift. These are created by tools (e.g. Liquibase) and are
+# not managed through bundles.
+IGNORED_OBJECT_SUFFIXES = {
+    "DATABASECHANGELOG",
+    "DATABASECHANGELOGLOCK",
+}
+
 # Execution order for drops (reverse dependency order)
 DROP_ORDER = [
     "task",
@@ -249,6 +257,9 @@ def compute_changesets(
         if fqn in desired:
             continue
 
+        if ex_obj.name.upper() in IGNORED_OBJECT_SUFFIXES:
+            continue
+
         if ex_obj.object_type in BREAKING_DROP_TYPES:
             if fqn not in confirmed_drops:
                 unconfirmed_breaking.append(f"{ex_obj.object_type.upper()} {fqn}")
@@ -307,6 +318,7 @@ def compute_changesets(
 def write_changesets(changesets: list[Changeset], output_root: Path) -> Path:
     """Write one .sql file per logical group and a master changelog."""
     output_root.mkdir(parents=True, exist_ok=True)
+    print(f"[engine] Output directory (absolute): {output_root.resolve()}")
     changesets_dir = output_root / "changesets"
     changesets_dir.mkdir(exist_ok=True)
 
@@ -347,6 +359,7 @@ def write_changesets(changesets: list[Changeset], output_root: Path) -> Path:
                 master.append(f'  <include file="{f}" relativeToChangelogFile="true"/>')
     master.append("</databaseChangeLog>")
     master_path.write_text("\n".join(master) + "\n")
+    print(f"[engine] Master changelog (absolute): {master_path.resolve()}")
 
     return master_path
 
